@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import {CacheCleaner} from '../../src/cache-cleaner'
 
-jest.setTimeout(60000)
+jest.setTimeout(120000)
 
 test('will cleanup unused dependency jars and build-cache entries', async () => {
     const projectRoot = prepareTestProject()
@@ -49,17 +49,17 @@ test('will cleanup unused gradle versions', async () => {
 
     const gradle733 = path.resolve(gradleUserHome, "caches/7.3.3")
     const wrapper733 = path.resolve(gradleUserHome, "wrapper/dists/gradle-7.3.3-bin")
-    const gradle741 = path.resolve(gradleUserHome, "caches/7.4.1")
+    const gradleCurrent = path.resolve(gradleUserHome, "caches/7.4.2")
 
     expect(fs.existsSync(gradle733)).toBe(true)
     expect(fs.existsSync(wrapper733)).toBe(true)
-    expect(fs.existsSync(gradle741)).toBe(true)
+    expect(fs.existsSync(gradleCurrent)).toBe(true)
 
     await cacheCleaner.forceCleanup()
 
     expect(fs.existsSync(gradle733)).toBe(false)
     expect(fs.existsSync(wrapper733)).toBe(false)
-    expect(fs.existsSync(gradle741)).toBe(true)
+    expect(fs.existsSync(gradleCurrent)).toBe(true)
 })
 
 async function runGradleBuild(projectRoot: string, args: string, version: string = '3.1'): Promise<void> {
@@ -77,9 +77,11 @@ async function runGradleWrapperBuild(projectRoot: string, args: string, version:
 }
 
 function prepareTestProject(): string {
-    const projectRoot = 'test/jest/resources/unused-dependencies'
+    const projectRoot = 'test/jest/resources/cache-cleanup'
     fs.rmSync(path.resolve(projectRoot, 'HOME'), { recursive: true, force: true })
+    fs.rmSync(path.resolve(projectRoot, 'tmp'), { recursive: true, force: true })
     fs.rmSync(path.resolve(projectRoot, 'build'), { recursive: true, force: true })
     fs.rmSync(path.resolve(projectRoot, '.gradle'), { recursive: true, force: true })
     return projectRoot
 }
+
