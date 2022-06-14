@@ -6,7 +6,7 @@ on:
 
 env:
 #  DOWNLOAD_DIST: ${{ inputs.download-dist }}
-  GRADLE_BUILD_ACTION_CACHE_KEY_PREFIX: integ-test-cache-cleanup-${{ inputs.cache-key-prefix }}
+  GRADLE_BUILD_ACTION_CACHE_KEY_PREFIX: integ-test-cache-cleanup-${{ github.run_number }}-
   GRADLE_BUILD_ACTION_CACHE_DEBUG_ENABLED: true
 
 jobs:
