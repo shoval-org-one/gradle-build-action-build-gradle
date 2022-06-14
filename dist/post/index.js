@@ -70425,7 +70425,8 @@ function restore(gradleUserHome, cacheListener) {
         }));
         if ((0, cache_utils_1.isCacheCleanupEnabled)() && !(0, cache_utils_1.isCacheReadOnly)()) {
             core.info('Preparing cache for cleanup.');
-            new cache_cleaner_1.CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']).prepare();
+            const cacheCleaner = new cache_cleaner_1.CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']);
+            yield cacheCleaner.prepare();
         }
     });
 }
@@ -70442,7 +70443,8 @@ function save(gradleUserHome, cacheListener) {
         }
         if ((0, cache_utils_1.isCacheCleanupEnabled)()) {
             core.info('Forcing cache cleanup.');
-            new cache_cleaner_1.CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']).forceCleanup();
+            const cacheCleaner = new cache_cleaner_1.CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']);
+            yield cacheCleaner.forceCleanup();
         }
         yield core.group('Caching Gradle state', () => __awaiter(this, void 0, void 0, function* () {
             return new cache_base_1.GradleStateCache(gradleUserHome).save(cacheListener);
