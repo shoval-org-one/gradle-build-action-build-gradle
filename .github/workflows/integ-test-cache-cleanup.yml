@@ -73,4 +73,4 @@ jobs:
       with:
         cache-read-only: true
     - name: Report Gradle User Home
-      run: du -hct 5M /home/runner/.gradle/caches/modules-2
+      run: [[ -e caches/modules-2/files-2.1/junit/junit/4.13.2 ]] || echo "Found JUnit"
