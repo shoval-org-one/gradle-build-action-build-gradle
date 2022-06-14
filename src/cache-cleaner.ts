@@ -1,6 +1,7 @@
 import * as exec from '@actions/exec'
 import fs from 'fs'
 import path from 'path'
+import {cacheDebug} from './cache-utils'
 
 export class CacheCleaner {
     private readonly gradleUserHome: string
@@ -12,6 +13,8 @@ export class CacheCleaner {
     }
 
     async prepare(): Promise<void> {
+        cacheDebug(`Preparing Gradle User Home for future cleanup`)
+
         fs.rmSync(path.resolve(this.gradleUserHome, 'caches/journal-1'), {recursive: true, force: true})
         fs.mkdirSync(path.resolve(this.gradleUserHome, 'caches/journal-1'), {recursive: true})
         fs.writeFileSync(
@@ -23,6 +26,8 @@ export class CacheCleaner {
     }
 
     async forceCleanup(): Promise<void> {
+        cacheDebug(`Forcing Gradle User Home cleanup`)
+
         await this.ageAllFiles('gc.properties')
 
         const cleanupProjectDir = path.resolve(this.tmpDir, 'dummy-cleanup-project')

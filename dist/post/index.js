@@ -64109,6 +64109,7 @@ exports.CacheCleaner = void 0;
 const exec = __importStar(__nccwpck_require__(1514));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
+const cache_utils_1 = __nccwpck_require__(1678);
 class CacheCleaner {
     constructor(gradleUserHome, tmpDir) {
         this.gradleUserHome = gradleUserHome;
@@ -64116,6 +64117,7 @@ class CacheCleaner {
     }
     prepare() {
         return __awaiter(this, void 0, void 0, function* () {
+            (0, cache_utils_1.cacheDebug)(`Preparing Gradle User Home for future cleanup`);
             fs_1.default.rmSync(path_1.default.resolve(this.gradleUserHome, 'caches/journal-1'), { recursive: true, force: true });
             fs_1.default.mkdirSync(path_1.default.resolve(this.gradleUserHome, 'caches/journal-1'), { recursive: true });
             fs_1.default.writeFileSync(path_1.default.resolve(this.gradleUserHome, 'caches/journal-1/file-access.properties'), 'inceptionTimestamp=0');
@@ -64125,6 +64127,7 @@ class CacheCleaner {
     }
     forceCleanup() {
         return __awaiter(this, void 0, void 0, function* () {
+            (0, cache_utils_1.cacheDebug)(`Forcing Gradle User Home cleanup`);
             yield this.ageAllFiles('gc.properties');
             const cleanupProjectDir = path_1.default.resolve(this.tmpDir, 'dummy-cleanup-project');
             fs_1.default.mkdirSync(cleanupProjectDir, { recursive: true });
@@ -64940,6 +64943,7 @@ function restore(gradleUserHome, cacheListener) {
             yield gradleStateCache.restore(cacheListener);
         }));
         if ((0, cache_utils_1.isCacheCleanupEnabled)() && !(0, cache_utils_1.isCacheReadOnly)()) {
+            core.info('Preparing cache for cleanup.');
             new cache_cleaner_1.CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']).prepare();
         }
     });
@@ -64956,6 +64960,7 @@ function save(gradleUserHome, cacheListener) {
             return;
         }
         if ((0, cache_utils_1.isCacheCleanupEnabled)()) {
+            core.info('Forcing cache cleanup.');
             new cache_cleaner_1.CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']).forceCleanup();
         }
         yield core.group('Caching Gradle state', () => __awaiter(this, void 0, void 0, function* () {

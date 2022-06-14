@@ -2,6 +2,7 @@ name: CI-init-script-check
 
 on:
   workflow_dispatch:
+  push:
 
 env:
 #  DOWNLOAD_DIST: ${{ inputs.download-dist }}
