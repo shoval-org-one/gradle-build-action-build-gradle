@@ -38,9 +38,14 @@ jobs:
       with:
         cache-read-only: false
         gradle-home-cache-cleanup: true
+
+    - name: Report Gradle User Home
+      run: du -hc ~/.gradle/caches/modules-2
     - name: Assemble groovy-dsl project
       working-directory: .github/workflow-samples/groovy-dsl
       run: ./gradlew assemble --build-cache
+    - name: Report Gradle User Home
+      run: du -hc ~/.gradle/caches/modules-2
 
   check-clean-cache:
     needs: assemble-build
