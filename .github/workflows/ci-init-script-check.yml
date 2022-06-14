@@ -62,6 +62,6 @@ jobs:
         if [ -e ~/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-math3/3.1.1 ]; then
           echo "Found commons-math3 3.1.1 in cache"
         fi
-        if [ ~ -e ~/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-math3/3.1 ]; then
+        if [ ! -e ~/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-math3/3.1 ]; then
           echo "Found commons-math3 3.1 NOT found in cache"
         fi
