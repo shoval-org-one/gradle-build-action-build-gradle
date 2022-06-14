@@ -55,4 +55,4 @@ jobs:
       with:
         cache-read-only: true
     - name: Report Gradle User Home
-      run: du -hct 1M ~/.gradle/caches/modules-2
+      run: du -hc ~/.gradle/caches/modules-2
