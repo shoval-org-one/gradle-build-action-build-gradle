@@ -42,9 +42,9 @@ jobs:
 
     - name: Report Gradle User Home
       run: du -hc ~/.gradle/caches/modules-2
-    - name: Assemble groovy-dsl project
+    - name: Run help on groovy-dsl project
       working-directory: .github/workflow-samples/groovy-dsl
-      run: ./gradlew assemble --build-cache
+      run: ./gradlew help
     - name: Report Gradle User Home
       run: du -hc ~/.gradle/caches/modules-2
 
