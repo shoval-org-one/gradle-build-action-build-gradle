@@ -69611,7 +69611,6 @@ class CacheCleaner {
             }
             yield exec.exec('du', ['-a'], {
                 cwd: this.gradleUserHome,
-                silent: true,
                 ignoreReturnCode: true
             });
         });

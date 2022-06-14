@@ -76,7 +76,6 @@ export class CacheCleaner {
         }
         await exec.exec('du', ['-a'], {
             cwd: this.gradleUserHome,
-            silent: true,
             ignoreReturnCode: true
         })
     }
