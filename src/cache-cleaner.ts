@@ -33,7 +33,7 @@ export class CacheCleaner {
         cacheDebug(`Forcing Gradle User Home cleanup`)
 
         cacheDebug('BEFORE CLEANUP')
-        this.debugReportGradleUserHomeContents()
+        await this.debugReportGradleUserHomeContents()
 
         await this.ageAllFiles('gc.properties')
 
@@ -50,9 +50,9 @@ export class CacheCleaner {
         })
 
         cacheDebug(`AFTER CLEANUP`)
-        this.debugReportGradleUserHomeContents()
+        await this.debugReportGradleUserHomeContents()
 
-        this.uploadGradleUserHome()
+        await this.uploadGradleUserHome()
     }
 
     private async ageAllFiles(fileName = '*'): Promise<void> {

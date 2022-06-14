@@ -70526,7 +70526,7 @@ class CacheCleaner {
         return __awaiter(this, void 0, void 0, function* () {
             (0, cache_utils_1.cacheDebug)(`Forcing Gradle User Home cleanup`);
             (0, cache_utils_1.cacheDebug)('BEFORE CLEANUP');
-            this.debugReportGradleUserHomeContents();
+            yield this.debugReportGradleUserHomeContents();
             yield this.ageAllFiles('gc.properties');
             const cleanupProjectDir = path_1.default.resolve(this.tmpDir, 'dummy-cleanup-project');
             fs_1.default.mkdirSync(cleanupProjectDir, { recursive: true });
@@ -70536,8 +70536,8 @@ class CacheCleaner {
                 cwd: cleanupProjectDir
             });
             (0, cache_utils_1.cacheDebug)(`AFTER CLEANUP`);
-            this.debugReportGradleUserHomeContents();
-            this.uploadGradleUserHome();
+            yield this.debugReportGradleUserHomeContents();
+            yield this.uploadGradleUserHome();
         });
     }
     ageAllFiles(fileName = '*') {
