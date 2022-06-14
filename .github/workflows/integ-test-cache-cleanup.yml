@@ -1,28 +1,16 @@
 name: Test cache cleanup
 
 on:
-  workflow_call:
-    inputs:
-      cache-key-prefix:
-        type: string
-      runner-os:
-        type: string
-        default: '["ubuntu-latest", "windows-latest", "macos-latest"]'
-      download-dist:
-        type: boolean
-        default: false
+  workflow_dispatch:
 
 env:
-  DOWNLOAD_DIST: ${{ inputs.download-dist }}
+#  DOWNLOAD_DIST: ${{ inputs.download-dist }}
   GRADLE_BUILD_ACTION_CACHE_KEY_PREFIX: integ-test-cache-cleanup-${{ inputs.cache-key-prefix }}
   GRADLE_BUILD_ACTION_CACHE_DEBUG_ENABLED: true
 
 jobs:
   full-build:
-    strategy:
-      matrix:
-        os: ${{fromJSON(inputs.runner-os)}}
-    runs-on: ${{ matrix.os }}
+    runs-on: ubutuntu-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
@@ -39,10 +27,7 @@ jobs:
   # Second build will use the cache from the first build, but cleanup should remove unused artifacts
   assemble-build:
     needs: full-build
-    strategy:
-      matrix:
-        os: ${{fromJSON(inputs.runner-os)}}
-    runs-on: ${{ matrix.os }}
+    runs-on: ubutuntu-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
@@ -59,10 +44,7 @@ jobs:
 
   check-clean-cache:
     needs: assemble-build
-    strategy:
-      matrix:
-        os: ${{fromJSON(inputs.runner-os)}}
-    runs-on: ${{ matrix.os }}
+    runs-on: ubutuntu-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
@@ -73,5 +55,4 @@ jobs:
       with:
         cache-read-only: true
     - name: Report Gradle User Home
-      run: |
-          [[ -e caches/modules-2/files-2.1/junit/junit/4.13.2 ]] || echo "Found JUnit"
+      run: du -hct 1M ~/.gradle/caches/modules-2
