@@ -46,7 +46,9 @@ export async function restore(gradleUserHome: string, cacheListener: CacheListen
     })
 
     if (isCacheCleanupEnabled() && !isCacheReadOnly()) {
-        new CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']!).prepare()
+        core.info('Preparing cache for cleanup.')
+        const cacheCleaner = new CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']!)
+        await cacheCleaner.prepare()
     }
 }
 
@@ -62,7 +64,9 @@ export async function save(gradleUserHome: string, cacheListener: CacheListener)
     }
 
     if (isCacheCleanupEnabled()) {
-        new CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']!).forceCleanup()
+        core.info('Forcing cache cleanup.')
+        const cacheCleaner = new CacheCleaner(gradleUserHome, process.env['RUNNER_TEMP']!)
+        await cacheCleaner.forceCleanup()
     }
 
     await core.group('Caching Gradle state', async () => {
