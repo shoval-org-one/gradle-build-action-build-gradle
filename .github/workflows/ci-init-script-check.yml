@@ -10,7 +10,7 @@ env:
 
 jobs:
   full-build:
-    runs-on: ubutuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
   # Second build will use the cache from the first build, but cleanup should remove unused artifacts
   assemble-build:
     needs: full-build
-    runs-on: ubutuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
 
   check-clean-cache:
     needs: assemble-build
-    runs-on: ubutuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
