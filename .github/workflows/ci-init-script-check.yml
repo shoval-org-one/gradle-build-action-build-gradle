@@ -23,7 +23,7 @@ jobs:
         cache-read-only: false # For testing, allow writing cache entries on non-default branches
     - name: Build with 3.1
       working-directory: test/jest/resources/cache-cleanup
-      run: ./gradlew --no-daemon --build-cache -Dcommons-math3.version=3.1 build
+      run: gradle --no-daemon --build-cache -Dcommons-math3.version=3.1 build
 
   # Second build will use the cache from the first build, but cleanup should remove unused artifacts
   assemble-build:
@@ -39,14 +39,9 @@ jobs:
       with:
         cache-read-only: false
         gradle-home-cache-cleanup: true
-
-    - name: Report Gradle User Home
-      run: du -hc ~/.gradle/caches/modules-2
     - name: Build with 3.1.1
       working-directory: test/jest/resources/cache-cleanup
-      run: ./gradlew --no-daemon --build-cache -Dcommons-math3.version=3.1.1 build
-    - name: Report Gradle User Home
-      run: du -hc ~/.gradle/caches/modules-2
+      run: gradle --no-daemon --build-cache -Dcommons-math3.version=3.1.1 build
 
   check-clean-cache:
     needs: assemble-build
