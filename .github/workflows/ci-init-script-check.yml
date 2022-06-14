@@ -1,26 +1,58 @@
 name: CI-init-script-check
 
 on:
-  push:
-    paths:
-      - '.github/workflows/**'
-      - 'src/resources/init-scripts/**'
-      - 'test/init-script-check/**'
   workflow_dispatch:
 
+env:
+#  DOWNLOAD_DIST: ${{ inputs.download-dist }}
+  GRADLE_BUILD_ACTION_CACHE_KEY_PREFIX: integ-test-cache-cleanup-${{ inputs.cache-key-prefix }}
+  GRADLE_BUILD_ACTION_CACHE_DEBUG_ENABLED: true
+
 jobs:
-  test-init-scripts:
-    runs-on: ubuntu-latest
+  full-build:
+    runs-on: ubutuntu-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
-    - name: Setup Java
-      uses: actions/setup-java@v3
-      with:
-        distribution: temurin
-        java-version: 8
+    - name: Download distribution if required
+      uses: ./.github/actions/download-dist
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2 # Use a released version to avoid breakages
-    - name: Run integration tests
-      working-directory: test/init-scripts
-      run: ./gradlew check
+      uses: ./
+      with:
+        cache-read-only: false # For testing, allow writing cache entries on non-default branches
+    - name: Full build of groovy-dsl project
+      working-directory: .github/workflow-samples/groovy-dsl
+      run: ./gradlew build --build-cache
+
+  # Second build will use the cache from the first build, but cleanup should remove unused artifacts
+  assemble-build:
+    needs: full-build
+    runs-on: ubutuntu-latest
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v3
+    - name: Download distribution if required
+      uses: ./.github/actions/download-dist
+    - name: Setup Gradle
+      uses: ./
+      with:
+        cache-read-only: false
+        gradle-home-cache-cleanup: true
+    - name: Assemble groovy-dsl project
+      working-directory: .github/workflow-samples/groovy-dsl
+      run: ./gradlew assemble --build-cache
+
+  check-clean-cache:
+    needs: assemble-build
+    runs-on: ubutuntu-latest
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v3
+    - name: Download distribution if required
+      uses: ./.github/actions/download-dist
+    - name: Setup Gradle
+      uses: ./
+      with:
+        cache-read-only: true
+    - name: Report Gradle User Home
+      run: du -hct 1M ~/.gradle/caches/modules-2
